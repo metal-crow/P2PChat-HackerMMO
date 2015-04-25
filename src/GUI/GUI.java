@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,6 +36,7 @@ public class GUI extends JPanel{
 	public GUI(int height, int width){
 		this.width=width;
 		this.height=height;
+		setLayout(new BorderLayout());
 				
 		chat_text.setEditable(false);
 		DefaultCaret caret = (DefaultCaret)chat_text.getCaret();
@@ -74,6 +76,7 @@ public class GUI extends JPanel{
 
 		//various abilities
 		JButton kick=new JButton("Kick");
+		kick.setMargin(new Insets(0,0,0,0));
 		kick.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,6 +85,7 @@ public class GUI extends JPanel{
         });
 		abilities.add(kick);
         JButton disable=new JButton("Disable");
+        disable.setMargin(new Insets(0,0,0,0));
         disable.setEnabled(false);
         disable.addActionListener(new ActionListener() {
             @Override
@@ -90,7 +94,8 @@ public class GUI extends JPanel{
             }
         });
         abilities.add(disable);
-        JButton scramble=new JButton("Scramble");
+        JButton scramble=new JButton("(Un)Scramble");
+        scramble.setMargin(new Insets(0,0,0,0));
         scramble.setEnabled(false);
         scramble.addActionListener(new ActionListener() {
             @Override

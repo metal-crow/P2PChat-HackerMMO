@@ -186,7 +186,7 @@ public class listener_receiver implements Runnable{
                     String directeduser=inputstring.substring(inputstring.indexOf("/scramble")+10);
                     //if directed at us
                     if(directeduser.equals(p2p_user.name)){
-                        p2p_user.p.scrambled=true;
+                        p2p_user.p.scrambled=!p2p_user.p.scrambled;
                     }
 				}
 				
