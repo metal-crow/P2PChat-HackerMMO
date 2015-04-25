@@ -8,6 +8,9 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 //this listener thread listens to this socket's input stream
@@ -74,11 +77,12 @@ public class listener_receiver implements Runnable{
 			
 			//this prevents null reading, and blocks until such time
 			if(inputstring!=null && inputstring.length()>0){
+			    String userviewstxt="";
 				
 				//check to see if its the server assiging name
 				if(inputstring.startsWith("server-assigned-nick: ")){
 					p2p_user.name=inputstring.substring(22);
-					p2p_user.gui.set_text("you are called "+p2p_user.name);
+					userviewstxt=("you are called "+p2p_user.name);
 				}
 				
 				else if(inputstring.matches("[0-9\\.]+ is the emergency host")){
@@ -95,10 +99,10 @@ public class listener_receiver implements Runnable{
 								"n-"+publickey[0] +
 								"e-"+publickey[1]);
 						
-						p2p_user.gui.set_text(inputstring.substring(0,inputstring.indexOf("> :")+1) +" requested your public key. It has been broadcast.");
+						userviewstxt=(inputstring.substring(0,inputstring.indexOf("> :")+1) +" requested your public key. It has been broadcast.");
 					}catch(IOException u){
 						u.printStackTrace();
-						p2p_user.gui.set_text("ERROR: unable to broadcast public key");
+						userviewstxt=("ERROR: unable to broadcast public key");
 					}
 				}
 				
@@ -112,21 +116,21 @@ public class listener_receiver implements Runnable{
 					//if its not your public key and you dont already have it
 					if(!name.equals(p2p_user.name) && !p2p_user.other_users_public_keys.contains(name)){
 						p2p_user.other_users_public_keys.add(new RSA(n,e,name));
-						p2p_user.gui.set_text(date+" Got "+name+" public key");
+						userviewstxt=(date+" Got "+name+" public key");
 					}
 				}
 				
 				//if someone is sending a dm, check if its directed to this user, and decrypt it
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: DM-"+p2p_user.name+" m-[0-9]+") && !p2p_user.blacklist.contains(inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">")))){
 					BigInteger encryptedmss= new BigInteger(inputstring.substring(inputstring.indexOf("m-")+2));
-					p2p_user.gui.set_text(inputstring.substring(0,inputstring.indexOf("m-")+2)
+					userviewstxt=(inputstring.substring(0,inputstring.indexOf("m-")+2)
 										+p2p_user.Users_RSA.Decrypt(encryptedmss));
 				}
 				
 				//if someone exits
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/exit")){
 					String name=inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">"));
-					p2p_user.gui.set_text(name + " left the chat");
+					userviewstxt=(name + " left the chat");
 					//remove from connected users
 					p2p_user.gui.removeUser(name);
 				}
@@ -134,7 +138,7 @@ public class listener_receiver implements Runnable{
 				//if someone connects
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] User \\<(.*)\\> connected to chat")){
 					String name=inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">"));
-					p2p_user.gui.set_text(inputstring);
+					userviewstxt=(inputstring);
 					//add connected user
 					p2p_user.gui.addUser(name);
 				}
@@ -150,7 +154,7 @@ public class listener_receiver implements Runnable{
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] (.*) is now called (.*)")){
 					String oldname=inputstring.substring(inputstring.indexOf("]")+2,inputstring.indexOf(" is"));
 					String newname=inputstring.substring(inputstring.indexOf("called ")+7);
-					p2p_user.gui.set_text(inputstring);
+					userviewstxt=(inputstring);
 					//replace connected users name
 					p2p_user.gui.replaceUser(oldname,newname);
 				}
@@ -159,19 +163,30 @@ public class listener_receiver implements Runnable{
 				//kick ability is prevented by a block
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/kick (.*)") && !p2p_user.blacklist.contains(inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">")))){
 				    String directeduser=inputstring.substring(inputstring.indexOf("/kick")+6);
+				    userviewstxt=(inputstring);
 				    //if directed at us
 				    if(directeduser.equals(p2p_user.name)){
 				        //disconnect
 	                    p2p_user.handle_GUI_input("/exit");
 				    }
 				}
-				//diable disables a random ability
+				//disable disables a random ability
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/disable (.*)")){
                     String directeduser=inputstring.substring(inputstring.indexOf("/disable")+9);
+                    userviewstxt=(inputstring);
                     //if directed at us
                     if(directeduser.equals(p2p_user.name)){
                         //choose random ability, make it cooldown
                         p2p_user.p.cooldown(Player.abilities[new Random().nextInt(Player.abilities.length)]);
+                    }
+				}
+				//scramble converts all text you see into 
+				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/scramble (.*)")){
+				    userviewstxt=inputstring;
+                    String directeduser=inputstring.substring(inputstring.indexOf("/scramble")+10);
+                    //if directed at us
+                    if(directeduser.equals(p2p_user.name)){
+                        p2p_user.p.scrambled=true;
                     }
 				}
 				
@@ -179,12 +194,20 @@ public class listener_receiver implements Runnable{
 					//This works, but feels wrong
 					//check is this text is a user text message (not a user action alert), and then check against blacklist
 					if(inputstring.matches("(.*)<(.*)>(.*)") && !p2p_user.blacklist.contains(inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">")))){
-						p2p_user.gui.set_text(inputstring);
+					    userviewstxt=(inputstring);
 					}
 					//text only doesnt have <Name> if its an action alert. Allow it
 					else if(!inputstring.matches("(.*)<(.*)>(.*)")){
-						p2p_user.gui.set_text(inputstring);
+					    userviewstxt=(inputstring);
 					}
+				}
+				
+				if(!userviewstxt.isEmpty()){
+				    //if user is scrambled, alter text b4 its seen
+				    if(p2p_user.p.scrambled){
+				        userviewstxt=scrambleText(userviewstxt);
+				    }
+				    p2p_user.gui.set_text(userviewstxt);
 				}
 				
 				//have to flush string
@@ -192,4 +215,51 @@ public class listener_receiver implements Runnable{
 			}
 		}
 	}
+
+    private String scrambleText(String userviewstxt) {
+        StringBuilder out=new StringBuilder();
+        //for each word
+        String[] sentence=userviewstxt.split(" ");
+        for(String word:sentence){
+            //trim punctuation off word
+            String endpunc = "";
+            boolean endpunccheck=false;
+            for(char c:word.toCharArray()){
+                if(!Character.isAlphabetic(c)){
+                    if(!endpunccheck){
+                        out.append(c);
+                    }else{
+                        endpunc+=c;
+                    }
+                }else{
+                    endpunccheck=true;
+                }
+            }
+            word = word.replaceAll("[^a-zA-Z]", "");
+
+            if(word.length()>2){
+                //scramble the word,keeping 1st and last letter
+                out.append(word.charAt(0));
+                char end=word.charAt(word.length()-1);
+                //take letters in middle and shuffle
+                char[] middle=word.substring(1, word.length()-1).toCharArray();
+                //if the word is 4 letters long, force shuffle
+                if(middle.length==2){
+                    out.append(middle[1]);
+                    out.append(middle[0]);
+                }else{
+                    List<Character> l = new ArrayList<Character>();
+                    for(char c : middle)
+                        l.add(c); 
+                    Collections.shuffle(l);
+                    for(char c : l)
+                        out.append(c);
+                }
+                out.append(end+endpunc+" ");
+            }else{
+                out.append(word+endpunc+" ");
+            }
+        }
+        return out.toString();
+    }
 }

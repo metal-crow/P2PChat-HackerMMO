@@ -90,6 +90,15 @@ public class GUI extends JPanel{
             }
         });
         abilities.add(disable);
+        JButton scramble=new JButton("Scramble");
+        scramble.setEnabled(false);
+        scramble.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                input.setText("/scramble [target]");
+            }
+        });
+        abilities.add(scramble);
 
 		
 		abilities.setPreferredSize(new Dimension(90,height-50));
@@ -122,6 +131,13 @@ public class GUI extends JPanel{
                 }else{
                     abilities.getComponent(1).setEnabled(false);
                     p2p_user.p.cooldowntick("disable");
+                }
+                
+                if(p2p_user.p.hasAbility("scramble") && p2p_user.p.cooltimeleft("scramble")<=0){
+                    abilities.getComponent(2).setEnabled(true);
+                }else{
+                    abilities.getComponent(2).setEnabled(false);
+                    p2p_user.p.cooldowntick("scramble");
                 }
                 
                 //you gain an xp for every second you stay online
