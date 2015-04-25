@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
@@ -28,7 +29,7 @@ public class GUI extends JPanel{
 	private JTextPane chat_text = new JTextPane();
 	private JTextField input = new JTextField(25);
 	private JTextPane connected_users = new JTextPane();
-	
+	public  JPanel abilities=new JPanel();
 	//TODO color coding,fix layout
 	
 	public GUI(int height, int width){
@@ -69,7 +70,6 @@ public class GUI extends JPanel{
 		JScrollPane connected_users_sp = new JScrollPane(connected_users);
 		
 		//left sidebar, powers
-		JPanel abilities=new JPanel();
 		abilities.setLayout(new BoxLayout(abilities, BoxLayout.Y_AXIS));
 
 		//various abilities
@@ -81,11 +81,21 @@ public class GUI extends JPanel{
             }
         });
 		abilities.add(kick);
+        JButton disable=new JButton("Disable");
+        disable.setEnabled(false);
+        disable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                input.setText("/disable [target]");
+            }
+        });
+        abilities.add(disable);
+
 		
-		abilities.setPreferredSize(new Dimension(60,height-50));
+		abilities.setPreferredSize(new Dimension(90,height-50));
 		add(abilities,BorderLayout.LINE_START);
 		
-		chat_text_sp.setPreferredSize(new Dimension(width-180,height-50));
+		chat_text_sp.setPreferredSize(new Dimension(width-210,height-50));
 		add(chat_text_sp,BorderLayout.CENTER);
 		
 		connected_users_sp.setPreferredSize(new Dimension(60,height-50));
@@ -95,6 +105,32 @@ public class GUI extends JPanel{
 		user_input.add(input);
 		user_input.add(send);
 		add(user_input,BorderLayout.PAGE_END);
+		
+		Timer timer = new Timer(1000, new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(p2p_user.p.cooltimeleft("kick")<=0){
+                    abilities.getComponent(0).setEnabled(true);
+                }else{
+                    abilities.getComponent(0).setEnabled(false);
+                    p2p_user.p.cooldowntick("kick");
+                }
+                
+                if(p2p_user.p.hasAbility("disable") && p2p_user.p.cooltimeleft("disable")<=0){
+                    abilities.getComponent(1).setEnabled(true);
+                }else{
+                    abilities.getComponent(1).setEnabled(false);
+                    p2p_user.p.cooldowntick("disable");
+                }
+                
+                //you gain an xp for every second you stay online
+                if(p2p_user.connected){
+                    p2p_user.p.gainxp();
+                }
+            }
+        });
+		timer.start(); 
 	}
 	
 	public Dimension getPreferredSize() {

@@ -1,4 +1,6 @@
 package main;
+import game.Player;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,6 +8,7 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 //this listener thread listens to this socket's input stream
 //print any text it receives, as well as handling commands
@@ -161,6 +164,15 @@ public class listener_receiver implements Runnable{
 				        //disconnect
 	                    p2p_user.handle_GUI_input("/exit");
 				    }
+				}
+				//diable disables a random ability
+				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/disable (.*)")){
+                    String directeduser=inputstring.substring(inputstring.indexOf("/disable")+9);
+                    //if directed at us
+                    if(directeduser.equals(p2p_user.name)){
+                        //choose random ability, make it cooldown
+                        p2p_user.p.cooldown(Player.abilities[new Random().nextInt(Player.abilities.length)]);
+                    }
 				}
 				
 				else{

@@ -39,7 +39,7 @@ public class p2p_user {
 	public static GUI gui=new GUI(height,width);
 	private static JFrame f = new JFrame("Chat Room");
 	
-	private static Player p=new Player();
+	public static volatile Player p=new Player();
 	
 	public static void main(String[] args) {
         f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -243,12 +243,11 @@ public class p2p_user {
 			}
 
             //GAME ABILTIES
-            else if(users_input.startsWith("/kick .+") && p.hasAbility("kick")){
-                try {
-                    new PrintWriter(clientsocket.getOutputStream(), true).println("<"+name+">"+" : "+users_input);
-                } catch (IOException e) {
-                    gui.set_text("ERROR: Unable to send.");
-                }
+            else if(users_input.contains("/kick") && p.hasAbility("kick")){
+                checkCooldown("kick",users_input);
+            }
+            else if(users_input.contains("/disable") && p.hasAbility("disable")){
+                checkCooldown("disable",users_input);
             }
 			
 			//anything not specifically caught by commands
@@ -262,5 +261,19 @@ public class p2p_user {
 			}
 		}
 	}
+
+    private static void checkCooldown(String string,String users_input) {
+        int cooltimeleft=p.cooltimeleft(string);
+        if(cooltimeleft<=0){
+            try {
+                new PrintWriter(clientsocket.getOutputStream(), true).println("<"+name+">"+" : "+users_input);
+            } catch (IOException e) {
+                gui.set_text("ERROR: Unable to send.");
+            }
+            p.cooldown(string);
+        }else{
+            gui.set_text("Ability on cooldown, "+cooltimeleft+" seconds remaining.");
+        }        
+    }
 	
 }
