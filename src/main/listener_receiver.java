@@ -86,6 +86,9 @@ public class listener_receiver implements Runnable{
 				}
 				
 				else if(inputstring.matches("[0-9\\.]+ is the emergency host")){
+				    if(p2p_user.p.viewall){
+				        userviewstxt=inputstring;
+				    }
 					p2p_user.BACKUP_HOST=inputstring.substring(0,inputstring.indexOf(" is the emergency host"));
 				}
 				
@@ -120,11 +123,17 @@ public class listener_receiver implements Runnable{
 					}
 				}
 				
-				//if someone is sending a dm, check if its directed to this user, and decrypt it
-				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: DM-"+p2p_user.name+" m-[0-9]+") && !p2p_user.blacklist.contains(inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">")))){
-					BigInteger encryptedmss= new BigInteger(inputstring.substring(inputstring.indexOf("m-")+2));
-					userviewstxt=(inputstring.substring(0,inputstring.indexOf("m-")+2)
+				//if someone is sending a dm
+				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: DM-(.*) m-[0-9]+") && !p2p_user.blacklist.contains(inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">")))){
+				    if(p2p_user.p.viewall){
+                        userviewstxt=inputstring;
+                    }
+				    //check if its directed to this user, and decrypt it
+				    if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: DM-"+p2p_user.name+" m-[0-9]+")){
+				        BigInteger encryptedmss= new BigInteger(inputstring.substring(inputstring.indexOf("m-")+2));
+				        userviewstxt=(inputstring.substring(0,inputstring.indexOf("m-")+2)
 										+p2p_user.Users_RSA.Decrypt(encryptedmss));
+				    }
 				}
 				
 				//if someone exits
@@ -163,7 +172,9 @@ public class listener_receiver implements Runnable{
 				//kick ability is prevented by a block
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/kick (.*)") && !p2p_user.blacklist.contains(inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">")))){
 				    String directeduser=inputstring.substring(inputstring.indexOf("/kick")+6);
-				    userviewstxt=(inputstring);
+				    if(p2p_user.p.viewall){
+                        userviewstxt=inputstring;
+                    }
 				    //if directed at us
 				    if(directeduser.equals(p2p_user.name)){
 				        //disconnect
@@ -173,7 +184,9 @@ public class listener_receiver implements Runnable{
 				//disable disables a random ability
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/disable (.*)")){
                     String directeduser=inputstring.substring(inputstring.indexOf("/disable")+9);
-                    userviewstxt=(inputstring);
+                    if(p2p_user.p.viewall){
+                        userviewstxt=inputstring;
+                    }
                     //if directed at us
                     if(directeduser.equals(p2p_user.name)){
                         //choose random ability, make it cooldown
@@ -182,13 +195,27 @@ public class listener_receiver implements Runnable{
 				}
 				//scramble converts all text you see into 
 				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/scramble (.*)")){
-				    userviewstxt=inputstring;
+				    if(p2p_user.p.viewall){
+                        userviewstxt=inputstring;
+                    }
                     String directeduser=inputstring.substring(inputstring.indexOf("/scramble")+10);
                     //if directed at us
                     if(directeduser.equals(p2p_user.name)){
                         p2p_user.p.scrambled=!p2p_user.p.scrambled;
                     }
 				}
+				//forced to block another user
+                else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/forceblock (.*)")){
+                    if(p2p_user.p.viewall){
+                        userviewstxt=inputstring;
+                    }
+                    String directeduser=inputstring.substring(inputstring.indexOf("/forceblock")+12,inputstring.indexOf(" ", inputstring.indexOf("/forceblock")+13));
+                    String usertoblock=inputstring.substring(inputstring.indexOf(" ", inputstring.indexOf("/forceblock")+13));
+                    //if directed at us
+                    if(directeduser.equals(p2p_user.name)){
+                        p2p_user.blacklist.add(usertoblock);
+                    }
+                }
 				
 				else{
 					//This works, but feels wrong

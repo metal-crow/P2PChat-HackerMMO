@@ -9,14 +9,17 @@ public class Player {
     //store ability name, if ability unlocked, cooldown max, and current cooldown
     private HashMap<String, Triplet<Boolean,Integer,Integer>> unlockedAbilites=new HashMap<String, Triplet<Boolean,Integer,Integer>>();
     private int exp=0;
-    public static final String[] abilities={"kick","disable","scramble"};
+    public static final String[] abilities={"kick","disable","scramble","forceblock","viewall"};
     public boolean scrambled=false;
+    public boolean viewall=false;
     
     public Player() {
         //add all abilities
         unlockedAbilites.put(abilities[0], Triplet.with(true,10,0));
         unlockedAbilites.put(abilities[1], Triplet.with(false,15,0));
         unlockedAbilites.put(abilities[2], Triplet.with(false,100,0));
+        unlockedAbilites.put(abilities[3], Triplet.with(false,30,0));
+        unlockedAbilites.put(abilities[4], Triplet.with(true,0,0));
     }
     
     public boolean hasAbility(String name){
@@ -49,7 +52,11 @@ public class Player {
             //unlock disable ability
             unlockedAbilites.put("disable", Triplet.with(true,15,0));
         }
-        if(exp==2){//210){
+        if(exp==80){
+            //unlock forceblock ability
+            unlockedAbilites.put("forceblock", Triplet.with(true,30,0));
+        }
+        if(exp==210){
             //unlock scramble ability
             unlockedAbilites.put("scramble", Triplet.with(true,100,0));
         }

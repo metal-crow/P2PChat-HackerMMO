@@ -75,6 +75,15 @@ public class GUI extends JPanel{
 		abilities.setLayout(new BoxLayout(abilities, BoxLayout.Y_AXIS));
 
 		//various abilities
+		JButton viewall=new JButton("(Un)View All");
+		viewall.setMargin(new Insets(0,0,0,0));
+		viewall.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                input.setText("/viewall");
+            }
+        });
+        abilities.add(viewall);
 		JButton kick=new JButton("Kick");
 		kick.setMargin(new Insets(0,0,0,0));
 		kick.addActionListener(new ActionListener() {
@@ -104,7 +113,16 @@ public class GUI extends JPanel{
             }
         });
         abilities.add(scramble);
-
+        JButton fblock=new JButton("Force Block");
+        fblock.setMargin(new Insets(0,0,0,0));
+        fblock.setEnabled(false);
+        fblock.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                input.setText("/forceblock [target] [user]");
+            }
+        });
+        abilities.add(fblock);
 		
 		abilities.setPreferredSize(new Dimension(90,height-50));
 		add(abilities,BorderLayout.LINE_START);
@@ -125,24 +143,31 @@ public class GUI extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(p2p_user.p.cooltimeleft("kick")<=0){
-                    abilities.getComponent(0).setEnabled(true);
+                    abilities.getComponent(1).setEnabled(true);
                 }else{
-                    abilities.getComponent(0).setEnabled(false);
+                    abilities.getComponent(1).setEnabled(false);
                     p2p_user.p.cooldowntick("kick");
                 }
                 
                 if(p2p_user.p.hasAbility("disable") && p2p_user.p.cooltimeleft("disable")<=0){
-                    abilities.getComponent(1).setEnabled(true);
+                    abilities.getComponent(2).setEnabled(true);
                 }else{
-                    abilities.getComponent(1).setEnabled(false);
+                    abilities.getComponent(2).setEnabled(false);
                     p2p_user.p.cooldowntick("disable");
                 }
                 
                 if(p2p_user.p.hasAbility("scramble") && p2p_user.p.cooltimeleft("scramble")<=0){
-                    abilities.getComponent(2).setEnabled(true);
+                    abilities.getComponent(3).setEnabled(true);
                 }else{
-                    abilities.getComponent(2).setEnabled(false);
+                    abilities.getComponent(3).setEnabled(false);
                     p2p_user.p.cooldowntick("scramble");
+                }
+                
+                if(p2p_user.p.hasAbility("forceblock") && p2p_user.p.cooltimeleft("forceblock")<=0){
+                    abilities.getComponent(4).setEnabled(true);
+                }else{
+                    abilities.getComponent(4).setEnabled(false);
+                    p2p_user.p.cooldowntick("forceblock");
                 }
                 
                 //you gain an xp for every second you stay online

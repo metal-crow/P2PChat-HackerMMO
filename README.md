@@ -6,3 +6,8 @@ players compete to try to use various attacks to hack other players and kick the
 /kick [player] kicks that player, unless that player blocked the player who kicked them. 
 /disable [player] disables a random ability of the player
 /scramble [player] makes all text that player views very difficult to read, or if they are already scrambled, unscrambles them.
+/forceblock [player] [player2] forces player to block player2
+/viewall view all the user ability commands usually not shown
+
+
+high score system

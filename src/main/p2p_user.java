@@ -252,6 +252,12 @@ public class p2p_user {
             else if(users_input.contains("/scramble") && p.hasAbility("scramble")){
                 checkCooldown("scramble",users_input);
             }
+            else if(users_input.contains("/forceblock") && p.hasAbility("forceblock")){
+                checkCooldown("forceblock",users_input);
+            }
+            else if(users_input.contains("/viewall") && p.hasAbility("viewall")){
+                p.viewall=!p.viewall;
+            }
 			
 			//anything not specifically caught by commands
 			else{
