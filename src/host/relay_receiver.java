@@ -75,7 +75,7 @@ public class relay_receiver implements Runnable{
 						}
 						
 						//if the user exits, remove from list and close thread
-						if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/exit")){
+						if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/exit (.*)")){
 							connection_listener.connected_users.remove(connection_listener.connected_users.indexOf(user));
 							//since this user COULD have been the backup host, and if they exit and we dont have a new backup host were in trouble,
 							//every time someone exits generate a new backup host

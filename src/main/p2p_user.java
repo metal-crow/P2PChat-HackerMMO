@@ -160,7 +160,7 @@ public class p2p_user {
 				connecting=false;
 				connected=false;
 				try{
-					new PrintWriter(clientsocket.getOutputStream(), true).println("<"+name+">"+" : "+users_input);
+					new PrintWriter(clientsocket.getOutputStream(), true).println("<"+name+">"+" : "+users_input+" ["+p.curxp()+"]");
 				}catch(IOException u){
 					gui.set_text("ERROR: unable to alert others to exit");
 				}

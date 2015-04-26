@@ -137,11 +137,18 @@ public class listener_receiver implements Runnable{
 				}
 				
 				//if someone exits
-				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/exit")){
+				else if(inputstring.matches("\\[[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\] \\<(.*)\\> \\: \\/exit (.*)")){
 					String name=inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">"));
 					userviewstxt=(name + " left the chat");
 					//remove from connected users
 					p2p_user.gui.removeUser(name);
+	                //check their high score
+					int highscorerecivedval=Integer.valueOf(inputstring.substring(inputstring.lastIndexOf("[")+1,inputstring.lastIndexOf("]")));
+                    if(p2p_user.p.highScoreVal()<highscorerecivedval){
+                        p2p_user.p.storeHighScore(name, highscorerecivedval);
+                        userviewstxt+=" with a new high score of "+highscorerecivedval+"!";
+                    }
+
 				}
 				
 				//if someone connects

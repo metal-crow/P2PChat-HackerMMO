@@ -11,3 +11,4 @@ players compete to try to use various attacks to hack other players and kick the
 
 
 high score system
+When a user disconnects, check their uptime, and broadcast it if it > another user's broadcasted high score

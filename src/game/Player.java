@@ -2,6 +2,7 @@ package game;
 
 import java.util.HashMap;
 
+import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
 public class Player {
@@ -12,6 +13,7 @@ public class Player {
     public static final String[] abilities={"kick","disable","scramble","forceblock","viewall"};
     public boolean scrambled=false;
     public boolean viewall=false;
+    private Pair<String,Integer> highscore=new Pair<String,Integer>("",0);
     
     public Player() {
         //add all abilities
@@ -62,4 +64,15 @@ public class Player {
         }
     }
 
+    public int curxp() {
+        return exp;
+    }
+    
+    public void storeHighScore(String name, int s){
+        highscore.setAt0(name);
+        highscore.setAt1(s);
+    }
+    public int highScoreVal(){
+        return highscore.getValue1();
+    }
 }
