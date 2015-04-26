@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 import GUI.GUI;
 
@@ -51,6 +52,7 @@ public class p2p_user {
 		f.add(gui);
         f.pack();
         f.setVisible(true);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		while(connecting){
 			if(!connected){
@@ -115,10 +117,13 @@ public class p2p_user {
 					}
 					
 					try {
+	                    gui.set_text("Establishing connection...");
 						clientsocket = new Socket(HOST, PORT);
 						connected=true;
 					} catch (IOException e) {
-						gui.set_text("error connecting to server");
+						gui.set_text("Error connecting to server. The address may be invalid or the remote ip may be firewalled");
+						HOST="";
+						hosting="";
 					}
 				}
 				

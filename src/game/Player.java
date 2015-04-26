@@ -55,7 +55,7 @@ public class Player {
             //unlock disable ability
             unlockedAbilites.put("disable", Triplet.with(true,15,0));
         }
-        if(exp==5){
+        if(exp==50){
             //unlock mimic ability
             unlockedAbilites.put("mimic", Triplet.with(true,15,0));
         }
