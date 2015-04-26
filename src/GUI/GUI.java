@@ -123,6 +123,16 @@ public class GUI extends JPanel{
             }
         });
         abilities.add(fblock);
+        JButton mimic=new JButton("Mimic user");
+        mimic.setMargin(new Insets(0,0,0,0));
+        mimic.setEnabled(false);
+        mimic.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                input.setText("/mimic [name] [message]");
+            }
+        });
+        abilities.add(mimic);
 		
 		abilities.setPreferredSize(new Dimension(90,height-50));
 		add(abilities,BorderLayout.LINE_START);
@@ -168,6 +178,13 @@ public class GUI extends JPanel{
                 }else{
                     abilities.getComponent(4).setEnabled(false);
                     p2p_user.p.cooldowntick("forceblock");
+                }
+                
+                if(p2p_user.p.hasAbility("mimic") && p2p_user.p.cooltimeleft("mimic")<=0){
+                    abilities.getComponent(5).setEnabled(true);
+                }else{
+                    abilities.getComponent(5).setEnabled(false);
+                    p2p_user.p.cooldowntick("mimic");
                 }
                 
                 //you gain an xp for every second you stay online

@@ -249,20 +249,33 @@ public class p2p_user {
 			}
 
             //GAME ABILTIES
-            else if(users_input.contains("/kick") && p.hasAbility("kick")){
+            else if(users_input.startsWith("/kick") && p.hasAbility("kick")){
                 checkCooldown("kick",users_input);
             }
-            else if(users_input.contains("/disable") && p.hasAbility("disable")){
+            else if(users_input.startsWith("/disable") && p.hasAbility("disable")){
                 checkCooldown("disable",users_input);
             }
-            else if(users_input.contains("/scramble") && p.hasAbility("scramble")){
+            else if(users_input.startsWith("/scramble") && p.hasAbility("scramble")){
                 checkCooldown("scramble",users_input);
             }
-            else if(users_input.contains("/forceblock") && p.hasAbility("forceblock")){
+            else if(users_input.startsWith("/forceblock") && p.hasAbility("forceblock")){
                 checkCooldown("forceblock",users_input);
             }
-            else if(users_input.contains("/viewall") && p.hasAbility("viewall")){
+            else if(users_input.startsWith("/viewall") && p.hasAbility("viewall")){
                 p.viewall=!p.viewall;
+            }
+            else if(users_input.startsWith("/mimic") && p.hasAbility("mimic")){
+                int cooltimeleft=p.cooltimeleft("mimic");
+                if(cooltimeleft<=0){
+                    try{
+                        new PrintWriter(clientsocket.getOutputStream(), true).println("<"+users_input.substring(7,users_input.indexOf(" ",8))+">"+" : "+users_input.substring(users_input.indexOf(" ",8)+1));
+                    }catch(IOException u){
+                        gui.set_text("ERROR: Unable to send.");
+                    }
+                    p.cooldown("mimic");
+                }else{
+                    gui.set_text("Ability on cooldown, "+cooltimeleft+" seconds remaining.");
+                }
             }
 			
 			//anything not specifically caught by commands
