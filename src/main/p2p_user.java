@@ -40,6 +40,7 @@ public class p2p_user {
 	private static JFrame f = new JFrame("Chat Room");
 	
 	public static volatile Player p=new Player();
+    public static ArrayList<String> connectedUsers=new ArrayList<String>();
 	
 	public static void main(String[] args) {
         f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -186,14 +187,19 @@ public class p2p_user {
 			
 			//for user to change name (others can see)
 			else if(users_input.startsWith("/nick")){
-				try{
-					new PrintWriter(clientsocket.getOutputStream(), true).println(name+" is now called " + users_input.substring(6));
-				}catch(IOException u){
-					u.printStackTrace();
-					gui.set_text("ERROR: unable to alert others to name change");
-				}
-				name=users_input.substring(6);
-				gui.set_text("You are now called "+name);
+			    String newname=users_input.substring(6);
+			    if(!connectedUsers.contains(newname)){
+    				try{
+    					new PrintWriter(clientsocket.getOutputStream(), true).println(name+" is now called " + newname);
+    				}catch(IOException u){
+    					u.printStackTrace();
+    					gui.set_text("ERROR: unable to alert others to name change");
+    				}
+    				name=users_input.substring(6);
+    				gui.set_text("You are now called "+name);
+			    }else{
+	                 gui.set_text("A user with that name already exists.");
+			    }
 			}
 			
 			//for user to send a dm to a user using their public key (others can only see encrypted)

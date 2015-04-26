@@ -156,6 +156,7 @@ public class listener_receiver implements Runnable{
 					String name=inputstring.substring(inputstring.indexOf("<")+1,inputstring.indexOf(">"));
 					userviewstxt=(inputstring);
 					//add connected user
+					p2p_user.connectedUsers.add(name);
 					p2p_user.gui.addUser(name);
 				}
 				
