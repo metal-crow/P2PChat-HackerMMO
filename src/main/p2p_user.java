@@ -282,6 +282,7 @@ public class p2p_user {
                     }catch(IOException u){
                         gui.set_text("ERROR: Unable to send.");
                     }
+                    gui.set_text(users_input);
                     p.cooldown("mimic");
                 }else{
                     gui.set_text("Ability on cooldown, "+cooltimeleft+" seconds remaining.");
@@ -308,6 +309,7 @@ public class p2p_user {
             } catch (IOException e) {
                 gui.set_text("ERROR: Unable to send.");
             }
+            gui.set_text(users_input);
             p.cooldown(string);
         }else{
             gui.set_text("Ability on cooldown, "+cooltimeleft+" seconds remaining.");
