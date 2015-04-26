@@ -9,7 +9,7 @@ public class Player {
 
     //store ability name, if ability unlocked, cooldown max, and current cooldown
     private HashMap<String, Triplet<Boolean,Integer,Integer>> unlockedAbilites=new HashMap<String, Triplet<Boolean,Integer,Integer>>();
-    private int exp=0;
+    public int exp=0;
     public static final String[] abilities={"kick","disable","scramble","forceblock","viewall","mimic"};
     public boolean scrambled=false;
     public boolean viewall=false;

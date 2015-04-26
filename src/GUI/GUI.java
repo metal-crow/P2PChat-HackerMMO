@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -31,6 +32,8 @@ public class GUI extends JPanel{
 	private JTextField input = new JTextField(25);
 	private JTextPane connected_users = new JTextPane();
 	public  JPanel abilities=new JPanel();
+	private JLabel progess=new JLabel("<html>Hacking progess 0%</html>");
+
 	//TODO color coding,fix layout
 	
 	public GUI(int height, int width){
@@ -133,7 +136,9 @@ public class GUI extends JPanel{
             }
         });
         abilities.add(mimic);
-		
+        
+        abilities.add(progess);
+
 		abilities.setPreferredSize(new Dimension(90,height-50));
 		add(abilities,BorderLayout.LINE_START);
 		
@@ -190,6 +195,7 @@ public class GUI extends JPanel{
                 //you gain an xp for every second you stay online
                 if(p2p_user.connected){
                     p2p_user.p.gainxp();
+                    progess.setText("<html>Hacking progess "+p2p_user.p.exp+"%</html>");
                 }
             }
         });
