@@ -2,11 +2,14 @@ package main;
 import game.Player;
 import host.connection_listener;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -83,7 +86,9 @@ public class p2p_user {
 					
 					try {
 					    //connect to your own server
-						gui.set_text(InetAddress.getLocalHost().getHostAddress()+" is your ip");
+					    BufferedReader in = new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream()));
+					    String ip = in.readLine(); //you get the IP as a String
+						gui.set_text(InetAddress.getLocalHost().getHostAddress()+" is your local ip, "+ip+" is your remote ip");
 						clientsocket = new Socket(InetAddress.getLocalHost().getHostAddress(), PORT);
 					} catch (IOException e) {
 						e.printStackTrace();
